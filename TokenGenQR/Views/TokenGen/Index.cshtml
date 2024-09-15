@@ -1,0 +1,29 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Patient Type</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Index">
+            <input type="hidden" name="isNewPatient" value="true" />
+            <div class="form-group">
+                <input type="submit" value="New Patient" class="btn btn-block btn-lg btn-primary" />
+            </div>
+        </form>
+        <form asp-action="Index">
+            <input type="hidden" name="isNewPatient" value="false" />
+            <div class="form-group">
+                <input type="submit" value="Old Patient" class="btn btn-block btn-lg btn-success" />
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,44 @@
+﻿@model List<QRCodeInASPNetCore.Models.UserInfoModel>
+
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Patient List</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-12">
+        <table class="table">
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col">Token</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Phone</th>
+                    <th scope="col">Group Name</th>
+                    <th scope="col">Patient Type</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr class="@(item.PatientType == "old" ? "table-success" : "table-primary") ">
+                        <th scope="row">@item.Token</th>
+                        <td>@item.Name</td>
+                        <td>@item.Phone</td>
+                        <td>@item.GroupName</td>
+                        <td>@item.PatientType</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
