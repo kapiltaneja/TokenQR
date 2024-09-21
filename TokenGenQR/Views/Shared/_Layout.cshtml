@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Garg Fistula Token Gen</title>
+    <title>@ViewData["Title"] - GFRI Token Gen</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
@@ -11,8 +11,8 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="QRCode" asp-action="Index">Garg Fistula Token Gen</a>
-                
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">GFRI Token Gen</a>
+
                 @if (ViewBag.ShowNavBar == true)
                 {
                     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
@@ -33,7 +33,7 @@
                         </ul>
                     </div>
                 }
-                
+
             </div>
         </nav>
     </header>
@@ -44,9 +44,11 @@
     </div>
 
     <footer class="border-top footer text-muted">
-        <div class="row">
-            <div class="col-md-6"><span>&copy; 2024 - Garg Fistula Research Institute</span></div>
-            <div class="col-md-6 text-right"><span >Developed By: Kapil Taneja</span></div>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-6"><span>&copy; 2024 - Garg Fistula Research Institute</span></div>
+                <div class="col-md-6 text-right"><span>Developed By: Kapil Taneja</span></div>
+            </div>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

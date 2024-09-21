@@ -5,7 +5,8 @@ namespace QRCodeInASPNetCore.Models
 {
     public class UserInfoModel
     {
-        
+        [Key]
+        public int ID { get; set; }
         [DisplayName("Patient Name")]
         public string Name { get; set; }
         

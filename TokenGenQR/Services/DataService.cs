@@ -1,73 +1,83 @@
-﻿using System.Collections.Generic;
-using System;
+﻿using Dapper;
 using QRCodeInASPNetCore.Models;
-using static System.Net.WebRequestMethods;
-using System.Formats.Asn1;
-using System.Globalization;
-using System.IO;
-using CsvHelper;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace TokenGenQR.Services
 {
     public class DataService
     {
-
-        public List<UserInfoModel> ReadPatients(string filePath)
+        private readonly IDbConnection _db;
+        public DataService(IDbConnection db)
         {
-            using (var reader = new StreamReader(filePath))
-            using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
-            {
-                var records = csv.GetRecords<UserInfoModel>();
-                return new List<UserInfoModel>(records);
-            }
+            _db = db;
         }
 
-        public void AddPatient(UserInfoModel newPatient, string filePath)
+        public IEnumerable<UserInfoModel> ReadPatients(int? patientId = null)
         {
-            var employees = ReadPatients(filePath);
-            employees.Add(newPatient);
+            var patients = _db.Query<UserInfoModel>(
+                "sp_GetPatient",
+                new { ID = patientId },
+                commandType: CommandType.StoredProcedure);
 
-            using (var writer = new StreamWriter(filePath))
-            using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
-            {
-                csv.WriteRecords(employees);
-            }
+            return patients;
+
         }
 
-        public void Update(UserInfoModel updatedEmployee, string filePath)
+        public UserInfoModel AddPatient(UserInfoModel newPatient)
         {
-            var employees = ReadPatients(filePath);
+            var addedPatient = new UserInfoModel();
+            var patientId = _db.Query<int>(
+                    "sp_AddOrEditPatient",
+                    new { Name = newPatient.Name,
+                        Phone = newPatient.Phone,
+                        PatientType = newPatient.PatientType,  
+                        GroupName = newPatient.GroupName,
+                    },
+                    commandType: CommandType.StoredProcedure);
 
-            var employee = employees.Find(e => e.Token == updatedEmployee.Token);
-            if (employee != null)
-            {
-                employee.Name = updatedEmployee.Name;
-                employee.Phone = updatedEmployee.Phone;
-                employee.GroupName = updatedEmployee.GroupName;
-
-                using (var writer = new StreamWriter(filePath))
-                using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
-                {
-                    csv.WriteRecords(employees);
-                }
-            }
-        }
-
-        public void Remove(int token, string filePath)
-        {
-            var employees = ReadPatients(filePath);
-            var employeeToDelete = employees.Find(e => e.Token == token);
-
-            if (employeeToDelete != null)
-            {
-                employees.Remove(employeeToDelete);
-
-                using (var writer = new StreamWriter(filePath))
-                using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
-                {
-                    csv.WriteRecords(employees);
-                }
-            }
+            addedPatient = ReadPatients(patientId.First()).First();
+            return addedPatient;
         }
     }
+
+   
+
+    //public void Update(UserInfoModel updatedEmployee, string filePath)
+    //{
+    //    var employees = ReadPatients(filePath);
+
+    //    var employee = employees.Find(e => e.Token == updatedEmployee.Token);
+    //    if (employee != null)
+    //    {
+    //        employee.Name = updatedEmployee.Name;
+    //        employee.Phone = updatedEmployee.Phone;
+    //        employee.GroupName = updatedEmployee.GroupName;
+
+    //        using (var writer = new StreamWriter(filePath))
+    //        using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+    //        {
+    //            csv.WriteRecords(employees);
+    //        }
+    //    }
+    //}
+
+    //public void Remove(int token, string filePath)
+    //{
+    //    var employees = ReadPatients(filePath);
+    //    var employeeToDelete = employees.Find(e => e.Token == token);
+
+    //    if (employeeToDelete != null)
+    //    {
+    //        employees.Remove(employeeToDelete);
+
+    //        using (var writer = new StreamWriter(filePath))
+    //        using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+    //        {
+    //            csv.WriteRecords(employees);
+    //        }
+    //    }
+    //}
 }

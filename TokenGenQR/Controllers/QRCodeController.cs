@@ -16,7 +16,11 @@ namespace QRCodeInASPNetCore.Controllers
             ViewBag.ShowNavBar = true;
             QRCodeModel model = new QRCodeModel();
             Payload payload = null;
-            model.WebsiteURL = $"{this.Request.Scheme}://{this.Request.Host}{this.Request.PathBase}" + "/TokenGen?encpass=" +Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(DateTime.Today.ToString()));
+            var time3pm = new TimeSpan(15, 0, 0);
+            var currentTime = DateTime.Now.TimeOfDay;
+            var qrDate = time3pm < currentTime ? DateTime.Today.AddDays(1).ToString() : DateTime.Today.ToString();
+            model.QrGenDate = qrDate;
+            model.WebsiteURL = $"{this.Request.Scheme}://{this.Request.Host}{this.Request.PathBase}" + "/TokenGen?encpass=" +Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(qrDate));
             payload = new Url(model.WebsiteURL);
             QRCodeGenerator qrGenerator = new QRCodeGenerator();
             QRCodeData qrCodeData = qrGenerator.CreateQrCode(payload);
@@ -26,49 +30,6 @@ namespace QRCodeInASPNetCore.Controllers
             // use this when you want to show your logo in middle of QR Code and change color of qr code
             Bitmap logoImage = new Bitmap(@"wwwroot/img/gfri.jpg");
             var qrCodeAsBitmap = qrCode.GetGraphic(20, Color.Black, Color.White, logoImage);
-
-            string base64String = Convert.ToBase64String(BitmapToByteArray(qrCodeAsBitmap));
-            model.QRImageURL = "data:image/png;base64," + base64String;
-            return View("Index", model);
-        }
-
-        [HttpPost]
-        public IActionResult Index(QRCodeModel model)
-        {
-
-            Payload payload = null;
-
-            switch (model.QRCodeType)
-            {
-                case 1: // website url
-                    payload = new Url(model.WebsiteURL);
-                    break;
-                case 2: // bookmark url
-                    payload = new Bookmark(model.BookmarkURL, model.BookmarkURL);
-                    break;
-                case 3: // compose sms
-                    payload = new SMS(model.SMSPhoneNumber, model.SMSBody);
-                    break;
-                case 4: // compose whatsapp message
-                    payload = new WhatsAppMessage(model.WhatsAppNumber, model.WhatsAppMessage);
-                    break;
-                case 5://compose email
-                    payload = new Mail(model.ReceiverEmailAddress, model.EmailSubject, model.EmailMessage);
-                    break;
-                case 6: // wifi qr code
-                    payload = new WiFi(model.WIFIName, model.WIFIPassword, WiFi.Authentication.WPA);
-                    break;
-
-            }
-
-            QRCodeGenerator qrGenerator = new QRCodeGenerator();
-            QRCodeData qrCodeData = qrGenerator.CreateQrCode(payload);
-            QRCode qrCode = new QRCode(qrCodeData);
-            var qrCodeAsBitmap = qrCode.GetGraphic(20);
-
-            // use this when you want to show your logo in middle of QR Code and change color of qr code
-            //Bitmap logoImage = new Bitmap(@"wwwroot/img/Virat-Kohli.jpg");
-            //var qrCodeAsBitmap = qrCode.GetGraphic(20, Color.Black, Color.Red, logoImage);
 
             string base64String = Convert.ToBase64String(BitmapToByteArray(qrCodeAsBitmap));
             model.QRImageURL = "data:image/png;base64," + base64String;

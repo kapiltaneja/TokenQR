@@ -7,17 +7,32 @@
 
 <hr />
 <div class="row">
+    <div class="col-md-12">
+        <div>
+            @Html.ValidationSummary()
+        </div>
+    </div>
     <div class="col-md-4">
         <form asp-action="Index">
             <input type="hidden" name="isNewPatient" value="true" />
             <div class="form-group">
-                <input type="submit" value="New Patient" class="btn btn-block btn-lg btn-primary" />
+                <input type="submit" value="New Patient" class="btn btn-block btn-lg btn-primary" @{
+                    if (!@ViewData.ModelState.IsValid)
+                    {
+                        @:disabled="disabled"
+                    }
+                } />
             </div>
         </form>
         <form asp-action="Index">
             <input type="hidden" name="isNewPatient" value="false" />
             <div class="form-group">
-                <input type="submit" value="Old Patient" class="btn btn-block btn-lg btn-success" />
+                <input type="submit" value="Old Patient" class="btn btn-block btn-lg btn-success" @{
+                    if (!@ViewData.ModelState.IsValid)
+                    {
+                        @:disabled="disabled"
+                    }
+                } />
             </div>
         </form>
     </div>

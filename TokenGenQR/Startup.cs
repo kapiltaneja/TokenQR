@@ -6,8 +6,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using TokenGenQR.Services;
 
 namespace TokenGenQR
 {
@@ -24,6 +27,8 @@ namespace TokenGenQR
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            services.AddScoped<IDbConnection>(c => new SqlConnection(Configuration.GetConnectionString("grfi_db")));
+            services.AddScoped<DataService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -50,7 +55,7 @@ namespace TokenGenQR
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=QRCode}/{action=Index}/{id?}");
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
             });
 
 
