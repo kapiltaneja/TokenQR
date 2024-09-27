@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using QRCodeInASPNetCore.Models;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -35,6 +36,8 @@ namespace TokenGenQR.Services
                         Phone = newPatient.Phone,
                         PatientType = newPatient.PatientType,  
                         GroupName = newPatient.GroupName,
+                        CreatedDate = DateTime.UtcNow.AddHours(5.5),
+                        UpdatedDate = DateTime.UtcNow.AddHours(5.5)
                     },
                     commandType: CommandType.StoredProcedure);
 

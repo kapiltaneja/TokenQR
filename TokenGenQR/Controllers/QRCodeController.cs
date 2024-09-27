@@ -4,6 +4,7 @@ using QRCoder;
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Globalization;
 using System.IO;
 using static QRCoder.PayloadGenerator;
 
@@ -17,10 +18,10 @@ namespace QRCodeInASPNetCore.Controllers
             QRCodeModel model = new QRCodeModel();
             Payload payload = null;
             var time3pm = new TimeSpan(15, 0, 0);
-            var currentTime = DateTime.Now.TimeOfDay;
-            var qrDate = time3pm < currentTime ? DateTime.Today.AddDays(1).ToString() : DateTime.Today.ToString();
-            model.QrGenDate = qrDate;
-            model.WebsiteURL = $"{this.Request.Scheme}://{this.Request.Host}{this.Request.PathBase}" + "/TokenGen?encpass=" +Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(qrDate));
+            var currentTime = DateTime.UtcNow.AddHours(5.5).TimeOfDay;
+            var qrDate = time3pm < currentTime ? DateTime.UtcNow.AddHours(5.5).AddDays(1).Date : DateTime.UtcNow.AddHours(5.5).Date;
+            model.QrGenDate = qrDate.ToString("dd-MMM-yyyy", CultureInfo.InvariantCulture);
+            model.WebsiteURL = $"{this.Request.Scheme}://{this.Request.Host}{this.Request.PathBase}" + "/TokenGen?encpass=" +Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(qrDate.ToString()));
             payload = new Url(model.WebsiteURL);
             QRCodeGenerator qrGenerator = new QRCodeGenerator();
             QRCodeData qrCodeData = qrGenerator.CreateQrCode(payload);
